@@ -30,7 +30,7 @@ st.markdown("""
 MODEL_PATHS = {
     "ResNet50": "models/tb_model.keras",
     "VGG16": "models/vgg16_tb_model.h5",
-    "EfficientNetB0": "models/efficientnet_tb_model.h5"
+    "EfficientNetB0": "models/efficientnet_tb.h5"
 }
 
 IMG_SIZE = (224, 224)
