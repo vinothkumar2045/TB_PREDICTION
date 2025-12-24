@@ -60,8 +60,9 @@ if page == "Home":
     using advanced **Deep Learning models**.
     """)
 
+    # Use GitHub-hosted image (raw link)
     st.image(
-        "assets/sample_xray.png",
+        "https://raw.githubusercontent.com/vinothkumar2045/TB_PREDICTION/main/assets/sample_xray.png",
         caption="Chest X-ray Example",
         use_container_width=True
     )
@@ -119,6 +120,7 @@ elif page == "Prediction":
         list(MODEL_PATHS.keys())
     )
 
+    # Load the selected model
     model = load_model(MODEL_PATHS[model_choice])
 
     uploaded_file = st.file_uploader(
@@ -127,13 +129,24 @@ elif page == "Prediction":
     )
 
     if uploaded_file:
+        # Open image and ensure RGB
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded X-ray", use_container_width=True)
 
-        img = image.resize(IMG_SIZE)
+        # Resize and normalize
+        img = image.resize(IMG_SIZE).convert("RGB")
         img_array = np.array(img) / 255.0
+
+        # Ensure 3 channels
+        if img_array.shape[-1] != 3:
+            img_array = np.stack((img_array,) * 3, axis=-1)
+
+        # Add batch dimension
         img_array = np.expand_dims(img_array, axis=0)
 
+        st.write("Input shape for model:", img_array.shape)
+
+        # Predict
         prediction = model.predict(img_array)[0][0]
         confidence = round(float(prediction if prediction >= 0.5 else 1 - prediction) * 100, 2)
 
